@@ -94,4 +94,37 @@ describe("Catalogue", () => {
         expect(rejectedProduct).to.be.undefined; 
       });
     });
+
+    describe("search", () => {
+      beforeEach( () => {
+        cat = new Catalogue("Test Catalogue");
+        cat.addProduct(new Product("A123", "Product 1", 100, 10, 10.0));
+        cat.addProduct(new Product("A124", "Product 2", 100, 10, 20.0));
+        cat.addProduct(new Product("A125", "Product 3", 100, 10, 30.0));
+      });
+      it("should return products whose price is less than the price given in the key", () => {
+        const result = cat.search({ price: 25.00 });
+        expect(result).to.be.an.instanceOf(Array);
+        expect(result).to.have.lengthOf(2);
+        const resultProductsIds = result.map((product) => product.id);
+        expect(resultProductsIds).to.have.members(["A123", "A124"]);
+      });
+      it("should return products whose name contains the keyword given in the key", () => {
+        const result = cat.search({ keyword: "1" });
+        expect(result).to.be.an.instanceOf(Array);
+        expect(result).to.have.lengthOf(1);
+        expect(result[0].name).to.equal("Product 1");
+      })
+      it("should throw Error when criteria has neither key", () => {
+        expect(() => cat.search({ otherkey: "othervalue" })).to.throw("Bad search");
+      })
+      it("should return empty when the key's value is invalid", () => {
+        expect(() => cat.search({ price: "aa" })).to.throw("Bad search");
+        result = cat.search({ price: "25.00" });
+        expect(result).to.be.an.instanceOf(Array);
+        expect(result).to.have.lengthOf(2);
+        const resultProductsIds = result.map((product) => product.id);
+        expect(resultProductsIds).to.have.members(["A123", "A124"]);
+      })
+    })
 });

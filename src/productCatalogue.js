@@ -48,5 +48,15 @@ class Catalogue {
       .reduce((acc, p) => acc + 1, 0);
     return noProductsAdded;
   }
+
+  search(criteria) {
+    if (criteria.price && !isNaN(criteria.price)) {
+      return this.products.filter((product)=> product.price<criteria.price)
+    } else if (criteria.keyword) {
+      return this.products.filter((product)=> product.name.search(criteria.keyword) !== -1)
+    } else {
+      throw new Error("Bad search");
+    }
+  }
 }
 module.exports = Catalogue;
